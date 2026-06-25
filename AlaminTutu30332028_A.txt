@@ -1,0 +1,209 @@
+MariaDB [(none)]> create database CompanyDB;
+Query OK, 1 row affected (0.034 sec)
+
+MariaDB [(none)]> use CompanyDB;
+Database changed
+MariaDB [CompanyDB]> create table Department(deptNo varchar(10) primary key, deptName varchar(50) NOT NULL, mngrEmpNO varchar(10));
+Query OK, 0 rows affected (0.059 sec)
+
+MariaDB [CompanyDB]> create table Employee(empNo varchar(10) primary key, FName varchar(20) Not Null, Lname varchar(20) Not Null, Address varchar(100), DOB Date, Sex char(1) Not Null, check(sex IN('M', 'F')));
+Query OK, 0 rows affected (0.035 sec)
+
+MariaDB [CompanyDB]> create table Employee(empNo varchar(10) primary key, FName varchar(20) Not Null, Lname varchar(20) Not Null, Address varchar(100), DOB Date, Sex char(1) Not Null check(sex IN('M', 'F')), deptNo varchar(10), Position varchar(50) check(Position IN('Manager','Team Leader', 'Analyst', 'Software Developer')), FOREIGN KEY(deptNo) References Department(deptNO) ON Delete set Null);
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [CompanyDB]> Alter table Department Add Constraint FK_dept_manager FOREIGN KEY(MngrEmpNO) REFERENCES Employee(EmpNO) ON Delete set Null;
+Query OK, 0 rows affected (0.044 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [CompanyDB]> create table Project(projNO Varchar(10) Primary Key, ProjName varchar(100) Not Null, deptNo varchar(10), FOREIGN KEY(deptNo) REFERENCES Department(deptNO) ON Delete CASCADE);
+Query OK, 0 rows affected (0.030 sec)
+
+MariaDB [CompanyDB]> Create table WorksON(empNO varchar(10), projNo varchar(10), DateWorked DATE, HoursWorked INT check(HoursWorked BETWEEN 0 and 40), PRIMARY KEY(empNO, ProjNO, Dateworked), FOREIGN KEY(empNo) REFERENCES Employee(empNO) ON DELETE CASCADE, FOREIGN KEY(projNo) REFERENCES project(ProjNO) ON DELETE CASCADE);
+Query OK, 0 rows affected (0.034 sec)
+
+MariaDB [CompanyDB]> insert into department(deptNO, deptNAme, mngrEmpNo) values('D01', 'IT', Null),('D02', 'Planning', Null),('D03', 'Finance', Null), ('D04', 'HR', Null), ('D05', 'Marketing', Null), ('D06', 'Operations', Null), ('D07', 'Research', Null);
+Query OK, 7 rows affected (0.027 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [CompanyDB]> select * FROM department;
++--------+------------+-----------+
+| deptNo | deptName   | mngrEmpNO |
++--------+------------+-----------+
+| D01    | IT         | NULL      |
+| D02    | Planning   | NULL      |
+| D03    | Finance    | NULL      |
+| D04    | HR         | NULL      |
+| D05    | Marketing  | NULL      |
+| D06    | Operations | NULL      |
+| D07    | Research   | NULL      |
++--------+------------+-----------+
+7 rows in set (0.013 sec)
+
+MariaDB [CompanyDB]> insert into employee(empNo, FName, LName, Address, DOB, Sex, deptNo, Position) Values
+    -> ('E001', 'John', 'Kamau', 'Nairobi', '1985-03-15','M', 'D01', 'Manager'), ('E002', 'Mary', 'Achieng', 'Kisumu', '1992-07-21','F', 'D02', 'Manager'), ('E003', 'Antony', 'Ebo', 'Accra', '1995-11-10','M', 'D01', 'Software Developer'), ('E004', 'Frank', 'Atta', 'Kumasi', '1998-03-09','F', 'D03', 'Analyst'), ('E005', 'James', 'Mwangi', 'Mobasa', '1988-09-14','M', 'D04', 'Manager'), ('E006', 'Akosua', 'Faith', 'Dome', '2001-01-30','F', 'D05', 'Team Leader'), ('E007', 'Peter', 'Kiptoo', 'Kitale', '1997-12-11','M', 'D06', 'Analyst');
+Query OK, 7 rows affected (0.047 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [CompanyDB]> select * from Employee;
++-------+--------+---------+---------+------------+-----+--------+--------------------+
+| empNo | FName  | Lname   | Address | DOB        | Sex | deptNo | Position           |
++-------+--------+---------+---------+------------+-----+--------+--------------------+
+| E001  | John   | Kamau   | Nairobi | 1985-03-15 | M   | D01    | Manager            |
+| E002  | Mary   | Achieng | Kisumu  | 1992-07-21 | F   | D02    | Manager            |
+| E003  | Antony | Ebo     | Accra   | 1995-11-10 | M   | D01    | Software Developer |
+| E004  | Frank  | Atta    | Kumasi  | 1998-03-09 | F   | D03    | Analyst            |
+| E005  | James  | Mwangi  | Mobasa  | 1988-09-14 | M   | D04    | Manager            |
+| E006  | Akosua | Faith   | Dome    | 2001-01-30 | F   | D05    | Team Leader        |
+| E007  | Peter  | Kiptoo  | Kitale  | 1997-12-11 | M   | D06    | Analyst            |
++-------+--------+---------+---------+------------+-----+--------+--------------------+
+7 rows in set (0.027 sec)
+
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E001' where deptNO = 'D01';
+Query OK, 1 row affected (0.029 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E002' where deptNO = 'D02';
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E004' where deptNO = 'D03';
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E005' where deptNO = 'D04';
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E006' where deptNO = 'D05';
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E007' where deptNO = 'D06';
+MariaDB [CompanyDB]> update department set mngrEmpNO = 'E003' where deptNO = 'D07';
+MariaDB [CompanyDB]> select * from department;
++--------+------------+-----------+
+| deptNo | deptName   | mngrEmpNO |
++--------+------------+-----------+
+| D01    | IT         | E001      |
+| D02    | Planning   | E002      |
+| D03    | Finance    | E004      |
+| D04    | HR         | E005      |
+| D05    | Marketing  | E006      |
+| D06    | Operations | E007      |
+| D07    | Research   | E003      |
++--------+------------+-----------+
+7 rows in set (0.001 sec)
+
+MariaDB [CompanyDB]> insert into project(projNo, ProjName, deptNo) values ('P01', 'SCCS', 'D01'), ('P02', 'ERP', 'D01'), ('P03', 'Budget System', 'D03'), ('P04', 'Recruitment Portal', 'D04'), ('P05','Marketing Analytics', 'D05'), ('P06', 'Supply Chain', 'D06'), ('P07', 'AI Research', 'D07');
+Query OK, 7 rows affected (0.003 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+
+MariaDB [CompanyDB]> select * from project;
++--------+---------------------+--------+
+| projNO | ProjName            | deptNo |
++--------+---------------------+--------+
+| P01    | SCCS                | D01    |
+| P02    | ERP                 | D01    |
+| P03    | Budget System       | D03    |
+| P04    | Recruitment Portal  | D04    |
+| P05    | Marketing Analytics | D05    |
+| P06    | Supply Chain        | D06    |
+| P07    | AI Research         | D07    |
++--------+---------------------+--------+
+7 rows in set (0.000 sec)
+
+MariaDB [CompanyDB]> insert into workson(empNO, projNo, dateworked, hoursworked) VALUES ('E001', 'P01', '2025-01-05',8), ('E002', 'P02', '2025-01-06',6), ('E003', 'P01', '2025-01-07',7), ('E004', 'P03', '2025-01-08',5), ('E005', 'P04', '2025-01-09',8), ('E006', 'P05', '2025-01-10',6), ('E007', 'P06', '2025-01-11',7);
+Query OK, 7 rows affected (0.003 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+MariaDB [CompanyDB]> select * from Workson;
++-------+--------+------------+-------------+
+| empNO | projNo | DateWorked | HoursWorked |
++-------+--------+------------+-------------+
+| E001  | P01    | 2025-01-05 |           8 |
+| E002  | P02    | 2025-01-06 |           6 |
+| E003  | P01    | 2025-01-07 |           7 |
+| E004  | P03    | 2025-01-08 |           5 |
+| E005  | P04    | 2025-01-09 |           8 |
+| E006  | P05    | 2025-01-10 |           6 |
+| E007  | P06    | 2025-01-11 |           7 |
++-------+--------+------------+-------------+
+7 rows in set (0.000 sec)
+
+
+VIEWS
+
+a)
+
+MariaDB [CompanyDB]> create VIEW EmpProjDetails As SELECT e.empNO, e.fName, e.lName, p.projName, w.hoursworked FROM employee e JOIN Workson w ON e.empNo = w.empNo JOIN project p ON p.projNo = w.projNo;
+Query OK, 0 rows affected (0.011 sec)
+
+MariaDB [CompanyDB]> select * from EmpProjDetails;
++-------+--------+---------+---------------------+-------------+
+| empNO | fName  | lName   | projName            | hoursworked |
++-------+--------+---------+---------------------+-------------+
+| E001  | John   | Kamau   | SCCS                |           8 |
+| E002  | Mary   | Achieng | ERP                 |           6 |
+| E003  | Antony | Ebo     | SCCS                |           7 |
+| E004  | Frank  | Atta    | Budget System       |           5 |
+| E005  | James  | Mwangi  | Recruitment Portal  |           8 |
+| E006  | Akosua | Faith   | Marketing Analytics |           6 |
+| E007  | Peter  | Kiptoo  | Supply Chain        |           7 |
++-------+--------+---------+---------------------+-------------+
+7 rows in set (0.049 sec)
+
+MariaDB [CompanyDB]> create VIEW EmpProject AS SELECT w.empNo, w.projNo, SUM(w.hoursWorked) AS TotalHours FROM Employee e JOIN workson w ON e.empNo = e.empNo JOIN Project p ON p.ProjNo = w.projNo GROUP BY w.empNo, w.projNo;
+Query OK, 0 rows affected (0.005 sec)
+
+MariaDB [CompanyDB]> select * from EmpProject;
++-------+--------+------------+
+| empNo | projNo | TotalHours |
++-------+--------+------------+
+| E001  | P01    |         56 |
+| E002  | P02    |         42 |
+| E003  | P01    |         49 |
+| E004  | P03    |         35 |
+| E005  | P04    |         56 |
+| E006  | P05    |         42 |
+| E007  | P06    |         49 |
++-------+--------+------------+
+7 rows in set (0.012 sec)
+
+b).
+
+MariaDB [CompanyDB]> select projNo FROM EmpProject WHERE ProjNo = 'SCCS';
+Empty set (0.005 sec)
+
+
+c).
+
+MariaDB [CompanyDB]> Select Count(projNo) FROM EmpProject Where empNo = 'E001';
++---------------+
+| Count(projNo) |
++---------------+
+|             1 |
++---------------+
+1 row in set (0.007 sec)
+
+d).
+MariaDB [CompanyDB]> Select empNo, totalhours FROM empProject GROUP BY empNo;
++-------+------------+
+| empNo | totalhours |
++-------+------------+
+| E001  |         56 |
+| E002  |         42 |
+| E003  |         49 |
+| E004  |         35 |
+| E005  |         56 |
+| E006  |         42 |
+| E007  |         49 |
++-------+------------+
+7 rows in set (0.002 sec)
+
+
+7.28
+
+The materialized view stores the results of a query physically, so it must be updated whenever the Part table changes.
+That is, if a new part has partcost that is greater than 1000, then its partNo is added to the view. Furthermore, if an expensive part is deleted,then it is necessary to check whether another contract for the same part still costs mor  than 1000 before removing it from the view.
+
+The view can be maintained without accessing the part table during inserts or updates that make a part expensive because the new data is enough.
+
+
+
+
+
+
+
+
+
+
